@@ -1,0 +1,72 @@
+*{
+    padding:0px 0px;
+    margin: 0px 0px;
+}
+input{
+    background-color:antiquewhite;
+    display:inline-block;
+    padding: 2px 2px;
+    border: none;
+    border-radius: 5px;
+    width: 100px;
+}
+img{margin-bottom: -5px}
+.mSeed{
+    position:absolute;left:10px;top:10px;
+    color: white;
+}
+.floor{
+    position:absolute;left:200px;top:10px;
+    color: white;
+}
+.history input{
+    width: 70px;
+}
+.history{
+    color: white;
+    position:absolute;left:100px;top:100px;
+    width: 500px;height: 500px;
+    background-color:rgba(0,0,0,0.3);
+}
+._black{
+    position:absolute;left:100px;top:600px;
+    width: 500px;height: 50px;
+    background-color:rgba(0,0,0,0.3);
+}
+.manual{
+    position:absolute;left:100px;top:400px;
+    width: 500px;height: 200px;
+    color: white;
+    background-color:rgba(0,0,0,0.3);
+}
+.item{
+    color: white;
+    position:absolute;left:470px;top:260px;
+    width: 200px;height: 280px;
+    background-color:rgba(0,70,0,0.2);
+}
+.item2{
+    color: white;
+    position:absolute;left:470px;top:160px;
+    width: 200px;height: 100px;
+    background-color:rgba(0,0,70,0.2);
+}
+.item3{
+    color: white;
+    position:absolute;left:70px;top:160px;
+    width: 400px;height: 380px;
+    background-color:rgba(70,0,0,0.3);
+}
+.itemHelp{
+    position:absolute;left:1px;top:160px;
+    
+    width: 400px;height: 380px;
+}
+.mapConsole{
+    position:absolute;left:620px;top:430px;
+    width: 150px;
+}
+.mapConsole2{
+    position:absolute;left:620px;top:550px;
+    width: 150px;
+}

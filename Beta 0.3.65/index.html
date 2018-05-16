@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/details/vue.min.js"></script>
+    <link href="css/defaultCSS.css" rel="stylesheet">
+    <audio class="bgAudio" src="music/Ridiculon - Diptera Sonata.mp3" autoplay="true" playcount="-1"></audio>
+</head>
+<body>
+<div class="mainMap" v-show="mapRefresh" style="width:1000px;">
+    <div style="float:left;">
+    <div v-for="item in largeMap">
+        <span v-for="mapItem in item">
+            <span v-if="(mapItem==='\n')">
+                <br>
+            </span>
+            <span v-else>
+                <img :src="mapItem">
+            </span>
+        </span>
+    </div>
+    </div>
+    <div class="panel" style="float:left;">
+        <span class="mSeed">当前种子:{{mapSeed}}</span>
+        <span class="floor">当前层数:{{floor}}</span>
+        <span>当前职业:{{actor.PRO}}<br></span>
+        <span>当前HP:{{actor.HP}}<br></span>
+        <span>当前MP:{{actor.MP}}<br></span>
+        <span>当前攻击:{{actor.ATT}}<br></span>
+        <span>当前防御:{{actor.DEF}}<br></span>
+        <span>当前技能点:{{actor.SKL}}<br></span>
+        <span>当前EXP:{{actor.EXP}}<br></span>
+        <span>当前等级:{{actor.LEV}}<br></span>
+        <span>当前金钱:{{actor.GOL}}<br></span>
+        <span>当前回合行动点数:{{action}}<br></span>
+        <span>当前回合:{{round}}<br></span>
+        <input type="button" class="_menu" title="查看选项相关" value="主菜单" @click="viewMainMenu()" onmouseover="mainMap.initialConsoleInformation()"><br>
+        <input type="button" class="_skillPanel" title="查看所有技能" value="技能面板" @click="viewSkillPanel()" onmouseover="message('_skillPanel')"><br>
+        <input type="button" class="_item" title="查看拥有道具" value="背包" @click="viewItem()" onmouseover="message('_item')"><br>
+            <div class="skillPanel" v-show="skillPanelRefresh" style="float:left;">
+                <input type="button" class="_quickTreat" title="消耗10点MP以恢复10点HP" value="快速治疗" onclick="quickTreat()" onmouseover="message('_quickTreat')" v-if="s_quickTreat">
+                <br v-if="s_quickTreat">
+                <input type="button" class="_switchMP" title="消耗15点HP以恢复10点MP" value="血魔转换" onclick="switchMP()" onmouseover="message('_switchMP')" v-if="s_switchMP">
+                <br v-if="s_switchMP">
+                <input type="button" class="_arrow" title="对角色朝向的相邻的怪物造成10点伤害,消耗20MP" value="发射弓箭" onclick="arrow()" onmouseover="message('_arrow')" v-if="s_arrow">
+                <br v-if="s_arrow">
+                <input type="button" class="_strLine" title="对角色朝向的所有怪物造成n点伤害,n=8且递减至1,消耗50MP" value="直线穿刺" onclick="strLine()" onmouseover="message('_strLine')" v-if="s_strLine">
+                <br v-if="s_strLine">
+                <input type="button" class="_turned" title="改变角色的朝向" value="转向" onclick="turned()" onmouseover="message('_turned')"><br>
+            </div>
+            <div class="mainMenu" v-show="mainMenuRefresh" style="float:left;">
+                <input type="button" class="_restart" title="随机生成一局新的游戏" value="重置游戏" @click="restart" onmouseover="message('_restart')"><br>
+                <input type="button" class="_history" title="查看道具的效果" value="道具图鉴" @click="viewManual" onmouseover="message('_history')"><br>
+                <input type="button" class="_black2" title="随时都可以用的黑市,但价格较贵,需要消耗1HP" value="黑市" @click="viewBlack()" onmouseover="message('_black2')"><br>
+                <input type="button" class="_history" title="查看历史消息" value="控制台" @click="viewHistory" onmouseover="message('_history')"><br>
+            </div>
+    </div>
+    <div class="mapConsole">
+    <p v-html="consoleInformation"></p>
+    </div>
+    <div class="mapConsole2">
+    <p v-html="consoleInformation2"></p>
+    </div>
+    <div class="history" v-show="historyRefresh">
+    <input type="button" value="HP+500" @click="mainMap.actor.HP+=500" style="float:left;" v-if="easy">
+    <input type="button" value="MP+500" @click="mainMap.actor.MP+=500" style="float:left;" v-if="easy">
+    <input type="button" value="ATT+50" @click="mainMap.actor.ATT+=50" style="float:left;" v-if="easy">
+    <input type="button" value="DEF+50" @click="mainMap.actor.DEF+=50" style="float:left;" v-if="easy">
+    <br>
+    <p v-html="history"></p>
+    </div>
+    <div class="item3" v-if="itemRefresh">
+        <div v-for="(item,index) in equip" :title="item.des" v-show="!item.eq&&item.found">
+        {{item.name}}<input type="button" value="丢弃" @click="dropEquip(item)" style="width:50px;float:right;margin-right:20px;"><input type="button" value="装备" @click="equipItem(item)" style="width:50px;float:right;"><DD></DD>
+        </div>
+        <div class="itemHelp">道具说明:<br>可同时装备两件装备。部分装备无法装备。<br>装备丢弃后会出现在地上。<br>一共可以携带五件装备。(不包括装备栏)<br>一次性的道具丢弃后无法捡回。</div>
+    </div>
+    <div class="item2" v-if="itemRefresh">
+        <div v-for="(item,index) in actor.EQUIP">装备:{{item}}<br><input type="button" value="解除" @click="equipCancelItem(index)" style="width:50px;float:left;margin-left:20px;"><br></div>
+    </div>
+    <div class="item" v-if="itemRefresh">
+        <div v-for="(item,index) in bag" :title="item.des" v-if="item.quantity>0">
+                {{item.name}}<DD></DD>数量：{{item.quantity}}<input type="button" value="使用" @click="useItem(item)" style="width:50px;float:right"><input type="button" value="丢弃" @click="dropItem(item)" style="width:50px;float:right;margin-right:20px;">
+            
+        </div>
+    </div>
+    <div class="manual" v-show="manualRefresh">
+        <div v-for="item in bag">
+            <div v-if="item.found">{{item.name}}{{item.manual}}</div>
+        </div>
+    </div>
+    <div class="_black" v-show="blackRefresh">
+        <div v-for="(item,index) in blackShop" :title="item.des" v-if="b_if[item.id]">
+        {{item.name}}<DD></DD>数量：{{item.quantity}}<input type="button" value="购买" @click="buyItem(item)" style="width:50px;float:right;margin-right:20px;">
+        </div>
+    </div>
+</div>
+<script src="js/details/mapDetails.js"></script>
+<script src="js/map.js"></script>
+<script src="js/details/details.js"></script>
+<script src="js/mainMap.js"></script>
+<script src="js/item.js"></script> 
+<script src="js/initial.js" defer=true></script>
+<script src="js/skill.js" defer=true></script>
+<script src="js/details/itemDetails.js" defer=true></script>
+
+</body>
+
+</html>
